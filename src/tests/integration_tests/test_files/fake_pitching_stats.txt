@@ -1,0 +1,3 @@
+rk,name,tm,stat,notes
+1,name1,DET,.223,random notes
+2,name2,NY,0.4,
