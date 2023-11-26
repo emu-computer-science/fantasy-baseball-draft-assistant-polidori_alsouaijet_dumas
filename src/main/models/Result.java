@@ -10,7 +10,7 @@ public class Result {
 		this.message = message;
 	}
 
-	public boolean isSuccessful() {
+	public boolean successful() {
 		return successful;
 	}
 
