@@ -2,6 +2,7 @@ package main.models;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import main.enums.Position;
 
@@ -64,5 +65,24 @@ public class Player {
 	public void setStats(Map<String, Double> stats) {
 		this.stats = stats;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(drafted, name, positions, stats, team);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Player other = (Player) obj;
+		return drafted == other.drafted && Objects.equals(name, other.name)
+				&& Objects.equals(positions, other.positions) && Objects.equals(stats, other.stats)
+				&& Objects.equals(team, other.team);
+	}
+
 }
