@@ -66,7 +66,7 @@ public class FileUtils {
 					List<Position> positions = parsePositionDetails(playerDetails[i]);
 					newPlayer.setPositions(positions);
 				} else {
-					if (i < playerDetails.length && StringUtils.isNumber(playerDetails[i])) {
+					if (i < playerDetails.length && TypeUtils.isNumber(playerDetails[i])) {
 						String stat = playerDetails[i];
 						stats.put(header, Double.valueOf(stat));
 					}
