@@ -14,11 +14,13 @@ public class FantasyDriver {
 	
 	private static String battingStatsFileName = "mlb_al_batter_stats_2023.txt";
 	private static String pitchingStatsFileName = "mlb_al_pitching_stats_2023.txt";
-	private static FantasyService fantasyService = new FantasyService();
+	private static FantasyService fantasyService;
 
 	public static void main(String[] args) {
 		List<Player> players = getPlayers();
 		if (players == null) {return;}
+		
+		fantasyService = new FantasyService(players);
 		
 		while (true) {
 			UserAction userAction = View.promptForAction();
