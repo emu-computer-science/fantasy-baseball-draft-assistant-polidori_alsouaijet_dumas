@@ -4,9 +4,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 
-import main.utils.TypeChecker;
+import main.utils.StringUtils;
 
-public class TypeCheckerTests {
+public class StringUtilsTests {
 
 	@Test
 	public void isNumber_integer_true() {
@@ -14,7 +14,7 @@ public class TypeCheckerTests {
 		String string = "23";
 		
 		// Act
-		boolean isNumber = TypeChecker.isNumber(string);
+		boolean isNumber = StringUtils.isNumber(string);
 		
 		// Assert
 		assertTrue(isNumber);
@@ -26,7 +26,7 @@ public class TypeCheckerTests {
 		String string = ".123";
 		
 		// Act
-		boolean isNumber = TypeChecker.isNumber(string);
+		boolean isNumber = StringUtils.isNumber(string);
 		
 		// Assert
 		assertTrue(isNumber);
@@ -38,7 +38,7 @@ public class TypeCheckerTests {
 		String string = "0.123";
 		
 		// Act
-		boolean isNumber = TypeChecker.isNumber(string);
+		boolean isNumber = StringUtils.isNumber(string);
 		
 		// Assert
 		assertTrue(isNumber);
@@ -50,7 +50,7 @@ public class TypeCheckerTests {
 		String string = "test";
 		
 		// Act
-		boolean isNumber = TypeChecker.isNumber(string);
+		boolean isNumber = StringUtils.isNumber(string);
 		
 		// Assert
 		assertFalse(isNumber);
