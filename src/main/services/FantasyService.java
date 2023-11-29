@@ -15,7 +15,9 @@ public class FantasyService {
 	
 	private final List<Player> players;
 	private final Set<String> pitcherStats;
+	private final Set<String> batterStats;
 	private Evaluator pitcherEvaluator = new Evaluator("IP");
+	private Evaluator batterEvaluator = new Evaluator("BA");
 	private List<Player> draftA = new ArrayList<>();
 	private List<Player> draftB =  new ArrayList<>();
 	private List<Player> draftC = new ArrayList<>();
@@ -24,11 +26,22 @@ public class FantasyService {
 	public FantasyService(List<Player> players) {
 		this.players = players;
 		pitcherStats = getPitcherStats(players);
+		batterStats = getBatterStats(players);
+		
 	}
 
 	private Set<String> getPitcherStats(List<Player> players) {
 		return players.stream()
 					  .filter(player -> player.getPositions().contains(Position.PITCHER))
+					  .flatMap(player -> player.getStats().keySet().stream())
+					  .map(stat -> stat.toLowerCase())
+					  .distinct()
+					  .collect(Collectors.toSet());
+	}
+	
+	private Set<String> getBatterStats(List<Player> players) {
+		return players.stream()
+					  .filter(player -> ! player.getPositions().contains(Position.PITCHER))
 					  .flatMap(player -> player.getStats().keySet().stream())
 					  .map(stat -> stat.toLowerCase())
 					  .distinct()
@@ -146,7 +159,17 @@ public class FantasyService {
 	}
 
 	public Result performOverall(List<String> args) {
-		return null;
+		List<PlayerValuation> playerValuations = players.stream()
+													 	.filter(player -> !player.getPositions().contains(Position.PITCHER) && !player.isDrafted())
+													 	.map(player -> new PlayerValuation(player, batterEvaluator.evaluate(player)))
+													 	.filter(playerValuation -> playerValuation.getValuation() != null)
+													 	.sorted((p1, p2) -> -1 * Double.compare(p1.getValuation(), p2.getValuation()))
+													 	.toList();
+
+String message = generateValuationMessage(playerValuations, batterEvaluator.getExpression());
+
+
+return new Result(true, message);
 	}
 
 	public Result performPOverall(List<String> args) {
@@ -165,7 +188,7 @@ public class FantasyService {
 	private String generateValuationMessage(List<PlayerValuation> playerValuations, String expression) {
 		StringBuilder message = new StringBuilder();
 		
-		System.out.printf("\n%-25s %-8s %-13s %-9s (%s)\n", "Player", "Team", "Position(s)", "Valuation", expression);
+		System.out.printf("\n%-25s %-8s %-10s %-9s (%s)\n", "Player", "Team", "Position(s)", "Valuation", expression);
 		System.out.printf("-".repeat(60 + expression.length()) + "\n");
 		for (PlayerValuation playerValuation : playerValuations) {
 			Player player = playerValuation.getPlayer();
@@ -218,7 +241,47 @@ public class FantasyService {
 	}
 
 	public Result performTeam(List<String> args) {
-		return null;
+		
+		//String[] argsSplit = args[0].split(" ");
+		String argsSplit[] = args.get(0).split(" ");
+		String leagueMember = argsSplit[0].toUpperCase();
+		
+		switch (leagueMember) {
+		case "A":
+			for (Player player : draftA) {
+				System.out.printf("%-10s %-20s\n",
+			             getPositions(player), player.getName());
+										 }
+			break;
+		case "B":
+			for (Player player : draftB) {
+				System.out.printf("%-10s %-20s\n",
+			             getPositions(player), player.getName());
+										 }
+			break;
+		case "C":
+			for (Player player : draftC) {
+				System.out.printf("%-10s %-20s\n",
+			             getPositions(player), player.getName());
+										 }
+			break;
+		case "D":
+			for (Player player : draftD) {
+			    System.out.printf("%-10s %-20s\n",
+			             getPositions(player), player.getName());
+										 }
+			break;
+		default:
+			return new Result(false, "not a valid league member");
+		}
+		//System.out.println(leagueMember);
+		/*for (Player player : draftA) {
+		    System.out.printf("Player: %-20s Team: %-10s Positions: %-10s\n",
+		            player.getName(), player.getTeam(), getPositions(player));
+		    
+		   
+		}*/
+		 return new Result(true, null);
 	}
 
 	public Result performStars(List<String> args) {
@@ -275,5 +338,6 @@ public class FantasyService {
 		}
 		
 	}
+	
 	
 }
