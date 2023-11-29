@@ -55,4 +55,44 @@ public class TypeUtilsTests {
 		// Assert
 		assertFalse(isNumber);
 	}
+	
+	@Test
+	public void isOperator_true() {
+		// Arrange
+		String[] operators = {"+", "-", "*", "/"};
+		
+		// Act and Assert
+		for (String operator : operators) {
+			assertTrue(TypeUtils.isOperator(operator));
+		}
+	}
+	
+	@Test
+	public void isOperator_false() {
+		// Act
+		boolean isOperator = TypeUtils.isOperator("a");
+		
+		// Assert
+		assertFalse(isOperator);
+	}
+	
+	@Test
+	public void isOperator_char_true() {
+		// Arrange
+		char[] operators = {'+', '-', '*', '/'};
+		
+		// Act and Assert
+		for (char operator : operators) {
+			assertTrue(TypeUtils.isOperator(operator));
+		}
+	}
+	
+	@Test
+	public void isOperator_char_false() {
+		// Act
+		boolean isOperator = TypeUtils.isOperator('a');
+		
+		// Assert
+		assertFalse(isOperator);
+	}
 }
