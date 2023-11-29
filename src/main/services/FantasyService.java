@@ -1,6 +1,5 @@
 package main.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -52,7 +51,7 @@ public class FantasyService {
 													 	.toList();
 		
 		String message = generatePOverallMessage(playerValuations);
-		
+
 		return new Result(true, message);
 	}
 
@@ -96,7 +95,7 @@ public class FantasyService {
 	}
 
 	public Result performPEvalFun(List<String> args) {
-		String expression = "SO / IP + ERA".toLowerCase();
+		String expression = args.get(0).toLowerCase();
 		String[] components = expression.split(" ");
 
 		for (String component : components) {
