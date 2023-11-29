@@ -16,6 +16,10 @@ public class FantasyService {
 	private final List<Player> players;
 	private final Set<String> pitcherStats;
 	private Evaluator pitcherEvaluator = new Evaluator("IP");
+	private List<Player> draftA = new ArrayList<>();
+	private List<Player> draftB =  new ArrayList<>();
+	private List<Player> draftC = new ArrayList<>();
+	private List<Player> draftD = new ArrayList<>();
 	
 	public FantasyService(List<Player> players) {
 		this.players = players;
@@ -30,13 +34,115 @@ public class FantasyService {
 					  .distinct()
 					  .collect(Collectors.toSet());
 	}
-
+	
 	public Result performODraft(List<String> args) {
+		// Split args
+		String argsSplit[] = args.get(0).split("\"");
+		String playerName = argsSplit[1];
+		String leagueMember = argsSplit[2].substring(1,2).toUpperCase();
+		
+		int index = -1;
+		
+		// Go through the players list to find the playerName
+		for (int i = 0; i < players.size(); i++) {
+			String listPlayerSplit[] = players.get(i).getName().split(" ");
+			String listPlayerFirstInit = listPlayerSplit[0].substring(0,1);
+			String listPlayerLast = listPlayerSplit[1];
+			
+			// Check for first + last name 
+			if (playerName.contains(", ")) {
+				String playerNameSplit[] = playerName.split(",");
+				String playerNameLast = playerNameSplit[0];
+				String playerNameFirstInit = playerNameSplit[1].replace(" ", "");
+				if (playerNameLast.equalsIgnoreCase(listPlayerLast) && playerNameFirstInit.equalsIgnoreCase(listPlayerFirstInit))
+					index = i;
+			}
+			// Check just last name
+			else
+				if (playerName.equalsIgnoreCase(listPlayerLast)) {
+					if (index != -1) 
+						return new Result(false, "there are multiple players with that last name, be more specific");
+				index = i;
+			}
+		}
+		
+		// If index = -1, then the player wasn't found
+		if (index == -1) 
+			return new Result(false, "no player was drafted");
+
+		// Add the found player to their leagueMember's draft if they're not drafted yet
+		// Hash this later?
+		if (players.get(index).isDrafted())
+			return new Result(false, "this player was already drafted");
+		else {
+			switch (leagueMember) {
+			case "A":
+				draftA.add(players.get(index));
+				players.get(index).setDrafted(true);
+				break;
+			case "B":
+				draftB.add(players.get(index));
+				players.get(index).setDrafted(true);
+				break;
+			case "C":
+				draftC.add(players.get(index));
+				players.get(index).setDrafted(true);
+				break;
+			case "D":
+				draftD.add(players.get(index));
+				players.get(index).setDrafted(true);
+				break;
+			default:
+				return new Result(false, "not a valid league member, no player was drafted");
+			}
+		}
+		
 		return null;
 	}
 
 	public Result performIDraft(List<String> args) {
+		// Split args
+		String argsSplit[] = args.get(0).split("\"");
+		String playerName = argsSplit[1];
+		
+		int index = -1;
+		
+		// Go through the players list to find the playerName
+		for (int i = 0; i < players.size(); i++) {
+			String listPlayerSplit[] = players.get(i).getName().split(" ");
+			String listPlayerFirstInit = listPlayerSplit[0].substring(0,1);
+			String listPlayerLast = listPlayerSplit[1];
+			
+			// Check for first + last name 
+			if (playerName.contains(", ")) {
+				String playerNameSplit[] = playerName.split(",");
+				String playerNameLast = playerNameSplit[0];
+				String playerNameFirstInit = playerNameSplit[1].replace(" ", "");
+				if (playerNameLast.equalsIgnoreCase(listPlayerLast) && playerNameFirstInit.equalsIgnoreCase(listPlayerFirstInit))
+					index = i;
+			}
+			// Check just last name
+			else
+				if (playerName.equalsIgnoreCase(listPlayerLast)) {
+					if (index != -1) 
+						return new Result(false, "there are multiple players with that last name, be more specific");
+				index = i;
+			}
+		}
+		
+		// If index = -1, then the player wasn't found
+		if (index == -1) 
+			return new Result(false, "no player was drafted");
+
+		// Add the found player to member A's draft if they're not drafted yet
+		if (players.get(index).isDrafted())
+			return new Result(false, "this player was already drafted");
+		else {
+			draftA.add(players.get(index));
+		}
+		
 		return null;
+		
 	}
 
 	public Result performOverall(List<String> args) {
