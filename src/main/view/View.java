@@ -46,7 +46,7 @@ public class View {
 				+ "°。 RESTORE fileName 。°\n"
 				+ "°。 EVALFFUN expression 。°\n"
 				+ "°。 PEVALFUN expression 。°\n"
-				+ "°。 HELP 。°");
+				+ "°。 HELP 。°\n");
 		
 		return new Result(true, "displayHelp is fine");
 	}
