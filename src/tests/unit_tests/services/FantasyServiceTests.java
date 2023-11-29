@@ -1,5 +1,6 @@
 package tests.unit_tests.services;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -118,7 +119,7 @@ public class FantasyServiceTests {
 	}
 	
 	@Test
-	public void performPEvalFun_false() {
+	public void performPEvalFun_nonExistantStats_false() {
 		// Arrange
 		List<String> args = List.of("SO / IP + ERA");
 		
@@ -127,6 +128,16 @@ public class FantasyServiceTests {
 		
 		// Assert
 		assertFalse(result.successful());
+		assertEquals(result.getMessage(), "'so' is not a valid statistic.");
 	}
 	
+	@Test
+	public void performPEvalFun_nullArgs_false() {
+		// Act
+		Result result = fantasyService.performPEvalFun(null);
+		
+		// Assert
+		assertFalse(result.successful());
+		assertEquals(result.getMessage(), "Please enter an expression");
+	}
 }

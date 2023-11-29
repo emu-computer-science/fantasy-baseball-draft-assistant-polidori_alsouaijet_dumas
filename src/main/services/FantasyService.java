@@ -1,5 +1,6 @@
 package main.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -156,28 +157,64 @@ public class FantasyService {
 													 	.sorted((p1, p2) -> -1 * Double.compare(p1.getValuation(), p2.getValuation()))
 													 	.toList();
 		
-		String message = generatePOverallMessage(playerValuations);
+		String message = generateValuationMessage(playerValuations, pitcherEvaluator.getExpression());
 
 		return new Result(true, message);
 	}
 
-	private String generatePOverallMessage(List<PlayerValuation> playerValuations) {
+	private String generateValuationMessage(List<PlayerValuation> playerValuations, String expression) {
 		StringBuilder message = new StringBuilder();
 		
+		System.out.printf("\n%-25s %-8s %-13s %-9s (%s)\n", "Player", "Team", "Position(s)", "Valuation", expression);
+		System.out.printf("-".repeat(60 + expression.length()) + "\n");
 		for (PlayerValuation playerValuation : playerValuations) {
 			Player player = playerValuation.getPlayer();
+			String positions = getPositions(player);
 			
-			message.append(player.getName());
-			message.append("\t\t");
-			message.append(player.getTeam());
-			message.append("\t");
-			message.append("P");
-			message.append("\t");
-			message.append(playerValuation.getValuation());
-			message.append("\n");
+			message.append(String.format("%-25s %-8s %-13s %-9.2f\n", player.getName(), player.getTeam(), positions, playerValuation.getValuation()));
 		}
 		
 		return message.toString();
+	}
+
+	private String getPositions(Player player) {
+		StringBuilder positions = new StringBuilder();
+		
+		for (Position position : player.getPositions()) {
+			if (positions.length() == 0) {
+				positions.append(getPosition(position));
+			} else {
+				positions.append(", ");
+				positions.append(getPosition(position));
+			}
+		}
+		
+		return positions.toString();
+	}
+
+	private String getPosition(Position position) {
+		switch (position) {
+			case CATCHER:
+				return "C";
+			case FIRST_BASE:
+				return "1B";
+			case SECOND_BASE:
+				return "2B";
+			case THIRD_BASE:
+				return "3B";
+			case SHORT_STOP:
+				return "SS";
+			case LEFT_FIELD:
+				return "LF";
+			case CENTER_FIELD:
+				return "CF";
+			case RIGHT_FIELD:
+				return "RF";
+			case PITCHER:
+				return "P";
+			default:
+				return "";
+		}
 	}
 
 	public Result performTeam(List<String> args) {
@@ -201,12 +238,16 @@ public class FantasyService {
 	}
 
 	public Result performPEvalFun(List<String> args) {
+		if (args == null || args.size() == 0) {
+			return new Result(false, "Please enter an expression");
+		}
+		
 		String expression = args.get(0).toLowerCase();
 		String[] components = expression.split(" ");
 
 		for (String component : components) {
 			if (!TypeUtils.isOperator(component) && !TypeUtils.isNumber(component) && !pitcherStats.contains(component)) {
-				return new Result(false, component + " is not a valid statistic.");
+				return new Result(false, "'" + component + "' is not a valid statistic.");
 			}
 		}
 		

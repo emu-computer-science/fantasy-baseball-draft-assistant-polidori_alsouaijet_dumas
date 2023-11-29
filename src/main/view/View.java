@@ -8,6 +8,7 @@ import java.util.*;
 public class View {
 
 	public static UserAction promptForAction() {
+		System.out.print("$ ");
 		Scanner keyboard = new Scanner(System.in);
 		String input = keyboard.nextLine();
 		Action userActionInput = null;
