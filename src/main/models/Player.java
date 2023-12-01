@@ -10,18 +10,18 @@ public class Player {
 
 	private String name;
 	private String team;
-	private List<Position> positions;
+	private Position position;
 	private boolean drafted;
 	private Map<String, Double> stats;
 	
 	public Player() {
 	}
 	
-	public Player(String name, String team, List<Position> positions, boolean drafted, Map<String, Double> stats) {
+	public Player(String name, String team, Position position, boolean drafted, Map<String, Double> stats) {
 		super();
 		this.name = name;
 		this.team = team;
-		this.positions = positions;
+		this.position = position;
 		this.drafted = drafted;
 		this.stats = stats;
 	}
@@ -42,12 +42,12 @@ public class Player {
 		this.team = team;
 	}
 
-	public List<Position> getPositions() {
-		return positions;
+	public Position getPosition() {
+		return position;
 	}
 
-	public void setPositions(List<Position> positions) {
-		this.positions = positions;
+	public void setPosition(Position position) {
+		this.position = position;
 	}
 
 	public boolean isDrafted() {
@@ -68,7 +68,7 @@ public class Player {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(drafted, name, positions, stats, team);
+		return Objects.hash(drafted, name, position, stats, team);
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class Player {
 			return false;
 		Player other = (Player) obj;
 		return drafted == other.drafted && Objects.equals(name, other.name)
-				&& Objects.equals(positions, other.positions) && Objects.equals(stats, other.stats)
+				&& Objects.equals(position, other.position) && Objects.equals(stats, other.stats)
 				&& Objects.equals(team, other.team);
 	}
 

@@ -33,8 +33,8 @@ public class FantasyServiceTests {
 			put("ERA", 0.5);
 		}};
 		List<Player> players = List.of(
-				new Player("player1", "team1", List.of(Position.PITCHER), false, stats),
-				new Player("player2", "team2", List.of(Position.PITCHER), false, stats)
+				new Player("player1", "team1", (Position.PITCHER), false, stats),
+				new Player("player2", "team2", (Position.PITCHER), false, stats)
 		);
 		
 		fantasyService = new FantasyService(players);

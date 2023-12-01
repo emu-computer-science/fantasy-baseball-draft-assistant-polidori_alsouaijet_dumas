@@ -45,8 +45,8 @@ public class FileUtilsTests {
 		Map<String, Double> name3Stats = new HashMap<>() {{ put("stat", Double.valueOf(".223")); }};
 		Map<String, Double> name4Stats = new HashMap<>() {{ put("stat", Double.valueOf(".4")); }};
 		List<Player> expectedPlayers = List.of(
-				new Player("name3", "DET", List.of(Position.FIRST_BASE), false, name3Stats),
-				new Player("name4", "NY", List.of(Position.SECOND_BASE), false, name4Stats)
+				new Player("name3", "DET", Position.FIRST_BASE, false, name3Stats),
+				new Player("name4", "NY", Position.SECOND_BASE, false, name4Stats)
 		);
 		
 		// Act
@@ -64,8 +64,8 @@ public class FileUtilsTests {
 		Map<String, Double> name1Stats = new HashMap<>() {{ put("stat", Double.valueOf(".223")); }};
 		Map<String, Double> name2Stats = new HashMap<>() {{ put("stat", Double.valueOf(".4")); }};
 		List<Player> expectedPlayers = List.of(
-				new Player("name1", "DET", List.of(Position.PITCHER), false, name1Stats),
-				new Player("name2", "NY", List.of(Position.PITCHER), false, name2Stats)
+				new Player("name1", "DET", (Position.PITCHER), false, name1Stats),
+				new Player("name2", "NY", (Position.PITCHER), false, name2Stats)
 		);
 		
 		// Act

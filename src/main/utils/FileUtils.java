@@ -40,7 +40,7 @@ public class FileUtils {
 		}
 	
 		return readStatsFile(battingStatsFile).stream()
-				  							  .filter(player -> !player.getPositions().contains(Position.PITCHER))
+				  							  .filter(player -> !player.getPosition().equals(Position.PITCHER))
 				  							  .toList();
 	}
 	
@@ -63,8 +63,8 @@ public class FileUtils {
 				} else if (header.equals("tm")) {
 					newPlayer.setTeam(playerDetails[i]);
 				} else if (header.contains("pos")) {
-					List<Position> positions = parsePositionDetails(playerDetails[i]);
-					newPlayer.setPositions(positions);
+					Position position = parsePositionDetails(playerDetails[i]);
+					newPlayer.setPosition(position);
 				} else {
 					if (i < playerDetails.length && TypeUtils.isNumber(playerDetails[i])) {
 						String stat = playerDetails[i];
@@ -82,8 +82,7 @@ public class FileUtils {
 		return players;
 	}
 
-	public static List<Position> parsePositionDetails(String positionDetails) {
-		List<Position> positions = new ArrayList<>();
+	public static Position parsePositionDetails(String positionDetails) {
 		for (char c : positionDetails.toCharArray()) {
 			Position position = null;
 			
@@ -115,16 +114,15 @@ public class FileUtils {
 				case '9':
 					position = Position.RIGHT_FIELD;
 					break;
-				default:
-					break;
+				
 			}
 			
-			if (position != null) {
-				positions.add(position);
+			if(position != null) {
+				return position;
 			}
 		}
 		
-		return positions;
+		return null;
 	}
 
 	public static List<Player> readPitchingStats(String rootDirectory, String fileName) throws Exception {
@@ -135,7 +133,7 @@ public class FileUtils {
 		
 		List<Player> players = readStatsFile(pitchingStatsFile);
 		for (Player player : players) {
-			player.setPositions(List.of(Position.PITCHER));
+			player.setPosition(Position.PITCHER);
 		}
 		
 		return players;

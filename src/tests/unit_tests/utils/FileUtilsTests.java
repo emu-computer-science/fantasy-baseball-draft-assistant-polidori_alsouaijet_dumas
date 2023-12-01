@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -16,16 +17,15 @@ public class FileUtilsTests {
 	public void parsePositionDetails_positionsPresent_success() {
 		// Arrange
 		String positionDetails = "1/2/3D/4/56789";
-		Position[] expectedPositions = Position.values();
+		
 		
 		// Act
-		Position[] positions = FileUtils.parsePositionDetails(positionDetails).stream().toArray(Position[]::new);
+		Position position = FileUtils.parsePositionDetails(positionDetails);
 		
 		
 		// Assert
-		Arrays.sort(expectedPositions, (p1, p2) -> p1.compareTo(p2));	// Sort to ensure elements align
-		Arrays.sort(positions, (p1, p2) -> p1.compareTo(p2));
-		assertArrayEquals(expectedPositions, positions);
+		
+		assertEquals(Position.PITCHER, position);
 	}
 	
 	@Test
@@ -34,9 +34,9 @@ public class FileUtilsTests {
 		String positionDetails = "";
 		
 		// Act
-		List<Position> positions = FileUtils.parsePositionDetails(positionDetails);
+		Position position = FileUtils.parsePositionDetails(positionDetails);
 		
 		// Assert
-		assertTrue(positions.size() == 0);
+		assertTrue(position == null);
 	}
 }

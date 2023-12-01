@@ -27,7 +27,7 @@ public class FantasyService {
 
 	private Set<String> getPitcherStats(List<Player> players) {
 		return players.stream()
-					  .filter(player -> player.getPositions().contains(Position.PITCHER))
+					  .filter(player -> player.getPosition().equals(Position.PITCHER))
 					  .flatMap(player -> player.getStats().keySet().stream())
 					  .map(stat -> stat.toLowerCase())
 					  .distinct()
@@ -36,7 +36,7 @@ public class FantasyService {
 	
 	private Set<String> getBatterStats(List<Player> players) {
 		return players.stream()
-					  .filter(player -> ! player.getPositions().contains(Position.PITCHER))
+					  .filter(player -> ! player.getPosition().equals(Position.PITCHER))
 					  .flatMap(player -> player.getStats().keySet().stream())
 					  .map(stat -> stat.toLowerCase())
 					  .distinct()
@@ -147,7 +147,7 @@ public class FantasyService {
 
 	public Result performOverall(List<String> args) {
 		List<PlayerValuation> playerValuations = players.stream()
-													 	.filter(player -> !player.getPositions().contains(Position.PITCHER) && !player.isDrafted())
+													 	.filter(player -> !player.getPosition().equals(Position.PITCHER) && !player.isDrafted())
 													 	.map(player -> new PlayerValuation(player, batterEvaluator.evaluate(player)))
 													 	.filter(playerValuation -> playerValuation.getValuation() != null)
 													 	.sorted((p1, p2) -> -1 * Double.compare(p1.getValuation(), p2.getValuation()))
@@ -161,7 +161,7 @@ return new Result(true, message);
 
 	public Result performPOverall(List<String> args) {
 		List<PlayerValuation> playerValuations = players.stream()
-													 	.filter(player -> player.getPositions().contains(Position.PITCHER) && !player.isDrafted())
+													 	.filter(player -> player.getPosition().equals(Position.PITCHER) && !player.isDrafted())
 													 	.map(player -> new PlayerValuation(player, pitcherEvaluator.evaluate(player)))
 													 	.filter(playerValuation -> playerValuation.getValuation() != null)
 													 	.sorted((p1, p2) -> -1 * Double.compare(p1.getValuation(), p2.getValuation()))
@@ -179,28 +179,15 @@ return new Result(true, message);
 		System.out.printf("-".repeat(60 + expression.length()) + "\n");
 		for (PlayerValuation playerValuation : playerValuations) {
 			Player player = playerValuation.getPlayer();
-			String positions = getPositions(player);
+			String position = getPosition(player.getPosition());
 			
-			message.append(String.format("%-25s %-8s %-13s %-9.2f\n", player.getName(), player.getTeam(), positions, playerValuation.getValuation()));
+			message.append(String.format("%-25s %-8s %-13s %-9.2f\n", player.getName(), player.getTeam(), position, playerValuation.getValuation()));
 		}
 		
 		return message.toString();
 	}
 
-	private String getPositions(Player player) {
-		StringBuilder positions = new StringBuilder();
-		
-		for (Position position : player.getPositions()) {
-			if (positions.length() == 0) {
-				positions.append(getPosition(position));
-			} else {
-				positions.append(", ");
-				positions.append(getPosition(position));
-			}
-		}
-		
-		return positions.toString();
-	}
+	
 
 	private String getPosition(Position position) {
 		switch (position) {
@@ -233,46 +220,40 @@ return new Result(true, message);
 		String argsSplit[] = args.get(0).split(" ");
 		String leagueMember = argsSplit[0].toUpperCase();
 		
-		switch (leagueMember) {
-		case "A":
-			for (Player player : draftA) {
-				System.out.printf("%-10s %-20s\n",
-			             getPositions(player), player.getName());
-										 }
-			break;
-		case "B":
-			for (Player player : draftB) {
-				System.out.printf("%-10s %-20s\n",
-			             getPositions(player), player.getName());
-										 }
-			break;
-		case "C":
-			for (Player player : draftC) {
-				System.out.printf("%-10s %-20s\n",
-			             getPositions(player), player.getName());
-										 }
-			break;
-		case "D":
-			for (Player player : draftD) {
-			    System.out.printf("%-10s %-20s\n",
-			             getPositions(player), player.getName());
-										 }
-			break;
-		default:
-			return new Result(false, "not a valid league member");
+		if(playerMap.isEmpty() || (playerMap.get(leagueMember) == null)) {
+			return new Result(false, "No player on this team");
+			
 		}
-		//System.out.println(leagueMember);
-		/*for (Player player : draftA) {
-		    System.out.printf("Player: %-20s Team: %-10s Positions: %-10s\n",
-		            player.getName(), player.getTeam(), getPositions(player));
-		    
-		   
-		}*/
+		else {
+			for (Player player : playerMap.get(leagueMember)){
+				System.out.printf("Player: %-20s Team: %-10s Positions: %-10s\n",
+			            player.getName(), player.getTeam(), getPosition(player.getPosition()));
+			}
+			
+		}
+		
+			
 		 return new Result(true, null);
 	}
 
 	public Result performStars(List<String> args) {
-		return null;
+		String argsSplit[] = args.get(0).split(" ");
+		String leagueMember = argsSplit[0].toUpperCase();
+		
+		if(playerMap.isEmpty() || (playerMap.get(leagueMember) == null)) {
+			return new Result(false, "No player on this team");
+			
+		}
+		else {
+			for (Player player : playerMap.get(leagueMember)){
+				System.out.printf("Player: %-20s Team: %-10s Positions: %-10s\n",
+			            player.getName(), player.getTeam(), getPosition(player.getPosition()));
+			}
+			
+		}
+		
+			
+		 return new Result(true, null);
 	}
 
 	public Result performSave(List<String> args) {
