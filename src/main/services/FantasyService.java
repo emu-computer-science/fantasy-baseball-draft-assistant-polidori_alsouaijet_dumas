@@ -1,8 +1,6 @@
 package main.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import main.enums.Position;
@@ -18,10 +16,7 @@ public class FantasyService {
 	private final Set<String> batterStats;
 	private Evaluator pitcherEvaluator = new Evaluator("IP");
 	private Evaluator batterEvaluator = new Evaluator("BA");
-	private List<Player> draftA = new ArrayList<>();
-	private List<Player> draftB =  new ArrayList<>();
-	private List<Player> draftC = new ArrayList<>();
-	private List<Player> draftD = new ArrayList<>();
+	Map<String, List<Player>> playerMap = new HashMap<>();
 	
 	public FantasyService(List<Player> players) {
 		this.players = players;
@@ -82,35 +77,25 @@ public class FantasyService {
 		// If index = -1, then the player wasn't found
 		if (index == -1) 
 			return new Result(false, "no player was drafted");
+		
+		
 
 		// Add the found player to their leagueMember's draft if they're not drafted yet
 		// Hash this later?
 		if (players.get(index).isDrafted())
 			return new Result(false, "this player was already drafted");
 		else {
-			switch (leagueMember) {
-			case "A":
-				draftA.add(players.get(index));
-				players.get(index).setDrafted(true);
-				break;
-			case "B":
-				draftB.add(players.get(index));
-				players.get(index).setDrafted(true);
-				break;
-			case "C":
-				draftC.add(players.get(index));
-				players.get(index).setDrafted(true);
-				break;
-			case "D":
-				draftD.add(players.get(index));
-				players.get(index).setDrafted(true);
-				break;
-			default:
+			if (leagueMember != "A" || leagueMember != "B" || leagueMember != "C" || leagueMember != "D") {
 				return new Result(false, "not a valid league member, no player was drafted");
+			}
+			else {
+				playerMap.computeIfAbsent(leagueMember, k -> new ArrayList<>());
+				playerMap.get(leagueMember).add(players.get(index));
+				players.get(index).setDrafted(true);
 			}
 		}
 		
-		return null;
+		return new Result(true, null);
 	}
 
 	public Result performIDraft(List<String> args) {
@@ -151,10 +136,12 @@ public class FantasyService {
 		if (players.get(index).isDrafted())
 			return new Result(false, "this player was already drafted");
 		else {
-			draftA.add(players.get(index));
+			playerMap.computeIfAbsent("A", k -> new ArrayList<>());
+			playerMap.get("A").add(players.get(index));
+			players.get(index).setDrafted(true);
 		}
 		
-		return null;
+		return new Result(true, null);
 		
 	}
 
