@@ -13,6 +13,7 @@ public enum Action {
 	RESTORE,
 	EVALFUN,
 	PEVALFUN,
+	WEIGHT,
 	HELP
 	
 }

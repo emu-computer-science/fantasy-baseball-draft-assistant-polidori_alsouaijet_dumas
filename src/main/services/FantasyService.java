@@ -18,12 +18,22 @@ public class FantasyService implements Serializable {
 	private Evaluator pitcherEvaluator = new Evaluator("IP");
 	private Evaluator batterEvaluator = new Evaluator("BA");
 	Map<String, List<Player>> playerMap = new HashMap<>();
+	Map<Position, Double> weights = getDefaultWeights();
 	
 	public FantasyService(List<Player> players) {
 		this.players = players;
 		pitcherStats = getPitcherStats(players);
 		batterStats = getBatterStats(players);
 		
+	}
+
+	private Map<Position, Double> getDefaultWeights() {
+		Map<Position, Double> defaultWeights = new HashMap<>();
+		for (Position position : Position.values()) {
+			defaultWeights.put(position, Double.valueOf(1));
+		}
+		
+		return defaultWeights;
 	}
 
 	private Set<String> getPitcherStats(List<Player> players) {
@@ -151,6 +161,7 @@ public class FantasyService implements Serializable {
 													 	.filter(player -> !player.getPosition().equals(Position.PITCHER) && !player.isDrafted())
 													 	.map(player -> new PlayerValuation(player, batterEvaluator.evaluate(player)))
 													 	.filter(playerValuation -> playerValuation.getValuation() != null)
+													 	.map(player -> new PlayerValuation(player.getPlayer(), player.getValuation() * weights.get(player.getPlayer().getPosition())))
 													 	.sorted((p1, p2) -> -1 * Double.compare(p1.getValuation(), p2.getValuation()))
 													 	.toList();
 
@@ -305,6 +316,57 @@ return new Result(true, message);
 		pitcherEvaluator.setExpression(expression);
 		
 		return new Result(true, null);
+	}
+	
+	public Result performWeight(List<String> args) {
+		if (args == null || args.size() == 0) {
+			return new Result(false, "Please enter an expression");
+		}
+		
+		String[] components = args.get(0).split(" ");
+		for (int i = 0; i < components.length; i += 2) {
+			String positionString = components[i];
+			String weightString = components[i + 1];
+			
+			Position position = getPosition(positionString);
+			if (position == null) {
+				return new Result(false, positionString + " is not a valid position.");
+			}
+			
+			if (!TypeUtils.isNumber(weightString)) {
+				return new Result(false, weightString + " is not a valid number.");
+			}
+			
+			Double weight = Double.valueOf(weightString);
+			weights.put(position, weight);
+		}
+		
+		return new Result(true, null);
+	}
+	
+	private Position getPosition(String position) {
+		switch (position.toUpperCase()) {
+			case "C":
+				return Position.CATCHER;
+			case "1B":
+				return Position.FIRST_BASE;
+			case "2B":
+				return Position.SECOND_BASE;
+			case "3B":
+				return Position.THIRD_BASE;
+			case "SS":
+				return Position.SHORT_STOP;
+			case "LF":
+				return Position.LEFT_FIELD;
+			case "CF":
+				return Position.CENTER_FIELD;
+			case "RF":
+				return Position.RIGHT_FIELD;
+			case "P":
+				return Position.PITCHER;
+			default:
+				return null;
+		}
 	}
 	
 	public Evaluator getPitcherEvaluator() {

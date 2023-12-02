@@ -70,6 +70,8 @@ public class FantasyDriver {
 				return fantasyService.performEvalFun(userAction.getArgs());
 			case PEVALFUN:
 				return fantasyService.performPEvalFun(userAction.getArgs());
+			case WEIGHT:
+				return fantasyService.performWeight(userAction.getArgs());
 			case HELP:
 				return View.displayHelp();
 			default:

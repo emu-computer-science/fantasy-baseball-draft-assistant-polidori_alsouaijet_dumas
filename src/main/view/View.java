@@ -90,6 +90,9 @@ public class View {
 		case "PEVALFUN":
 			action = Action.PEVALFUN;
 			break;
+		case "WEIGHT":
+			action = Action.WEIGHT;
+			break;
 		case "HELP":
 			action = Action.HELP;
 			break;
