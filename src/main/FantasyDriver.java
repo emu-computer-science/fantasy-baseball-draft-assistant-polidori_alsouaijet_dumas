@@ -65,7 +65,7 @@ public class FantasyDriver {
 			case SAVE:
 				return FileUtils.save(userAction.getArgs(), fantasyService);
 			case RESTORE:
-				return FileUtils.restore(userAction.getArgs());
+				return FileUtils.restore(userAction.getArgs(), fantasyService);
 			case EVALFUN:
 				return fantasyService.performEvalFun(userAction.getArgs());
 			case PEVALFUN:

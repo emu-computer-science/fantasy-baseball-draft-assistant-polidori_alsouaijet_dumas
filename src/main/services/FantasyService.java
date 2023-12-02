@@ -250,10 +250,7 @@ return new Result(true, message);
 				System.out.printf("Player: %-20s Team: %-10s Positions: %-10s\n",
 			            player.getName(), player.getTeam(), getPosition(player.getPosition()));
 			}
-			
 		}
-		
-			
 		 return new Result(true, null);
 	}
 
@@ -280,6 +277,30 @@ return new Result(true, message);
 		return new Result(true, null);
 	}
 	
+	public Evaluator getPitcherEvaluator() {
+		return pitcherEvaluator;
+	}
+
+	public void setPitcherEvaluator(Evaluator pitcherEvaluator) {
+		this.pitcherEvaluator = pitcherEvaluator;
+	}
+
+	public Evaluator getBatterEvaluator() {
+		return batterEvaluator;
+	}
+
+	public void setBatterEvaluator(Evaluator batterEvaluator) {
+		this.batterEvaluator = batterEvaluator;
+	}
+
+	public Map<String, List<Player>> getPlayerMap() {
+		return playerMap;
+	}
+
+	public void setPlayerMap(Map<String, List<Player>> playerMap) {
+		this.playerMap = playerMap;
+	}
+	
 	class PlayerValuation {
 		
 		private Player player;
@@ -299,6 +320,7 @@ return new Result(true, message);
 		}
 		
 	}
+
 	
 	
 }

@@ -93,7 +93,7 @@ public class Evaluator implements Serializable {
 		buildExpressionTree();
 	}
 	
-	private static class Node {
+	private static class Node implements Serializable{
 		private String element;
 		private Node leftChild;
 		private Node rightChild;
@@ -160,7 +160,7 @@ public class Evaluator implements Serializable {
 		}
 	}
 	
-	private static class OperatorComparator implements Comparator<Character> {
+	private static class OperatorComparator implements Comparator<Character>, Serializable{
 		private static List<Character> highPriorityOperators = List.of('*', '/');
 		private static List<Character> lowPriorityOperators = List.of('+', '-');
 		
