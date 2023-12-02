@@ -113,7 +113,7 @@ public class FileUtils {
 				String header = headers[i].toLowerCase();
 				
 				if (header.equals("name")) {
-					newPlayer.setName(playerDetails[i]);
+					newPlayer.setName(playerDetails[i].replaceAll("[!@#$%^&*()]", ""));
 				} else if (header.equals("tm")) {
 					newPlayer.setTeam(playerDetails[i]);
 				} else if (header.contains("pos")) {

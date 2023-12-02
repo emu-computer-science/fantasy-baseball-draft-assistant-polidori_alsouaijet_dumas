@@ -49,7 +49,7 @@ public class View {
 				+ "°。 PEVALFUN expression 。°\n"
 				+ "°。 HELP 。°\n");
 		
-		return new Result(true, "displayHelp is fine");
+		return new Result(true, null);
 	}
 
 	public static void displayMessage(String message) {
