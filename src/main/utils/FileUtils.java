@@ -29,7 +29,7 @@ public class FileUtils {
 		try {
 			String fileName = args.get(0);
 			
-			FileOutputStream file = new FileOutputStream(rootDirectory + "/" + fileName);
+			FileOutputStream file = new FileOutputStream(rootDirectory + "/" + fileName + ".dat");
 			ObjectOutputStream out = new ObjectOutputStream(file);
 	
 			out.writeObject(fantasyService.getPitcherEvaluator());
@@ -53,13 +53,14 @@ public class FileUtils {
 			return new Result(false, "Please enter the name of the file.");
 		} 
 		
-		File file = new File(args.get(0));
+		
+		File file = new File(rootDirectory + "/" + args.get(0) + ".dat");
 		if (!file.exists()) {
 			return new Result(false, "The file does not exist. Please ensure the file is present in the 'files' folder.");
 		}
 		
 		try {
-			FileInputStream fileOutputStream = new FileInputStream(rootDirectory + "/" + file.getName());
+			FileInputStream fileOutputStream = new FileInputStream(file);
 			ObjectInputStream objectOutputStream = new ObjectInputStream(fileOutputStream);
 			
 			Evaluator pitcherEvaluator = (Evaluator)objectOutputStream.readObject();
