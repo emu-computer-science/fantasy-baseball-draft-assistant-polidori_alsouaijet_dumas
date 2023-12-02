@@ -216,8 +216,7 @@ return new Result(true, message);
 	}
 
 	public Result performTeam(List<String> args) {
-		
-		//String[] argsSplit = args[0].split(" ");
+
 		String argsSplit[] = args.get(0).split(" ");
 		String leagueMember = argsSplit[0].toUpperCase();
 		
@@ -225,10 +224,25 @@ return new Result(true, message);
 			return new Result(false, "No player on this team");
 			
 		}
-		else {
-			for (Player player : playerMap.get(leagueMember)){
-				System.out.printf("Player: %-20s Team: %-10s Positions: %-10s\n",
-			            player.getName(), player.getTeam(), getPosition(player.getPosition()));
+		
+		
+		for(Position position : Position.values()) {
+			List<Player> playerList = playerMap.get(leagueMember)
+												.stream()
+												.filter(player -> player.getPosition().equals(position))
+												.toList();
+			int i = 1;
+			for (Player player : playerList){
+				if(position == Position.PITCHER){
+					
+					System.out.printf("Positions: %-10s Player: %-20s\n",
+			           getPosition(player.getPosition())+i,  player.getName());
+					i++;
+				}
+				else {
+					System.out.printf("Positions: %-10s Player: %-20s\n",
+					           getPosition(player.getPosition()), player.getName());
+				}
 			}
 			
 		}
@@ -255,7 +269,23 @@ return new Result(true, message);
 	}
 
 	public Result performEvalFun(List<String> args) {
-		return null;
+		if (args == null || args.size() == 0) {
+			return new Result(false, "Please enter an expression");
+		}
+		
+		String expression = args.get(0).toLowerCase();
+		String[] components = expression.split(" ");
+
+		for (String component : components) {
+			if (!TypeUtils.isOperator(component) && !TypeUtils.isNumber(component) && !batterStats.contains(component)) {
+				return new Result(false, "'" + component + "' is not a valid statistic.");
+			}
+		}
+		
+		batterEvaluator.setExpression(expression);
+		
+		return new Result(true, null);
+	
 	}
 
 	public Result performPEvalFun(List<String> args) {
