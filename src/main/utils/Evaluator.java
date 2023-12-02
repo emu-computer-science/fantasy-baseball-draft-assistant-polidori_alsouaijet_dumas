@@ -1,12 +1,13 @@
 package main.utils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 import main.models.Player;
 
-public class Evaluator {
+public class Evaluator implements Serializable {
 
 	private String expression;
 	private Node tree;

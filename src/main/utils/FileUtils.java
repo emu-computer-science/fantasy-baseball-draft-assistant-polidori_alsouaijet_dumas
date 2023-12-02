@@ -1,7 +1,12 @@
 package main.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,17 +15,36 @@ import java.util.Scanner;
 
 import main.enums.Position;
 import main.models.Player;
+import main.models.Result;
+import main.services.FantasyService;
 
 public class FileUtils {
 	
 	private static String rootDirectory = System.getProperty("user.dir") + "/files";
 
-	public static void save() {
+	public static Result save(List<String> args, FantasyService fantasyService) {
+		return null;
 		
 	}
 	
-	public static void restore() {
+	public static Result restore(List<String> args) {
+		if (args.size() == 0) {
+			return new Result(false, "Please enter the name of the file.");
+		} 
 		
+		File file = new File(args.get(0));
+		if (!file.exists()) {
+			return new Result(false, "The file does not exist. Please ensure the file is present in the 'files' folder.");
+		}
+		
+		try {
+			FileInputStream fileOutputStream = new FileInputStream(file);
+			ObjectInputStream objectOutputStream = new ObjectInputStream(fileOutputStream);
+			Object object = objectOutputStream.readObject();
+			return new Result(true, null, object);
+		} catch (Exception ex) {
+			return new Result(false, "An exception occurred while trying to read the file.");
+		}
 	}
 	
 	public static List<Player> readInPlayers(String battingStatsFileName, String pitchingStatsFileName) throws Exception {

@@ -1,5 +1,6 @@
 package main.services;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -9,7 +10,7 @@ import main.models.Result;
 import main.utils.Evaluator;
 import main.utils.TypeUtils;
 
-public class FantasyService {
+public class FantasyService implements Serializable {
 	
 	private final List<Player> players;
 	private final Set<String> pitcherStats;
@@ -254,14 +255,6 @@ return new Result(true, message);
 		
 			
 		 return new Result(true, null);
-	}
-
-	public Result performSave(List<String> args) {
-		return null;
-	}
-
-	public Result performRestore(List<String> args) {
-		return null;
 	}
 
 	public Result performEvalFun(List<String> args) {

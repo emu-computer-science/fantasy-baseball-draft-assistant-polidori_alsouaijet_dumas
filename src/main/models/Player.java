@@ -1,12 +1,13 @@
 package main.models;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import main.enums.Position;
 
-public class Player {
+public class Player implements Serializable {
 
 	private String name;
 	private String team;
