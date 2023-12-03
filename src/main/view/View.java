@@ -47,6 +47,7 @@ public class View {
 				+ "°。 RESTORE fileName 。°\n"
 				+ "°。 EVALFFUN expression 。°\n"
 				+ "°。 PEVALFUN expression 。°\n"
+				+ "°。 WEIGHT expression 。°\n"
 				+ "°。 HELP 。°\n");
 		
 		return new Result(true, null);
