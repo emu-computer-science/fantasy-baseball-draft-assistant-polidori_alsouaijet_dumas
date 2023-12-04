@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import main.models.Player;
 
@@ -12,7 +13,6 @@ public class Evaluator implements Serializable {
 	private String expression;
 	private Node tree;
 	private List<String> variables = new ArrayList<>();
-	private OperatorComparator operatorComparator = new OperatorComparator();
 	
 	public Evaluator() {
 	}
@@ -59,6 +59,7 @@ public class Evaluator implements Serializable {
 	private LowestPriorityOperator findLowestPriorityOperator(String expression) {
 		int index = 0;
 		Character operator = null;
+		OperatorComparator operatorComparator = new OperatorComparator();
 		
 		char[] chars = expression.toCharArray();
 		for (int i = 0; i < chars.length; i++) {
@@ -93,6 +94,24 @@ public class Evaluator implements Serializable {
 		buildExpressionTree();
 	}
 	
+	@Override
+	public int hashCode() {
+		return Objects.hash(expression, tree, variables);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Evaluator other = (Evaluator) obj;
+		return Objects.equals(expression, other.expression) && Objects.equals(tree, other.tree)
+				&& Objects.equals(variables, other.variables);
+	}
+
 	private static class Node implements Serializable{
 		private String element;
 		private Node leftChild;
@@ -134,6 +153,25 @@ public class Evaluator implements Serializable {
 			else 
 				return leftValue * rightValue;
 		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(element, leftChild, rightChild);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Node other = (Node) obj;
+			return Objects.equals(element, other.element) && Objects.equals(leftChild, other.leftChild)
+					&& Objects.equals(rightChild, other.rightChild);
+		}
+		
 	}
 	
 	private static enum NodeType {

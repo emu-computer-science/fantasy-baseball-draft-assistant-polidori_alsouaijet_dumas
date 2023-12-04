@@ -1,6 +1,8 @@
 package tests.unit_tests.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -91,4 +93,29 @@ public class EvaluatorTests {
 		assertEquals(expectedResult, actualResult);
 	}
 	
+	@Test
+	public void equals_success() {
+		// Arrange
+		Evaluator evaluator1 = new Evaluator("SO / IP + ERA * 23.6");
+		Evaluator evaluator2 = new Evaluator("SO / IP + ERA * 23.6");
+		
+		// Act
+		boolean equals = evaluator1.equals(evaluator2);
+		
+		// Assert
+		assertTrue(equals);
+	}
+	
+	@Test
+	public void equals_false() {
+		// Arrange
+		Evaluator evaluator1 = new Evaluator("SO / IP + ERA * 23.6");
+		Evaluator evaluator2 = new Evaluator("SO * IP + ERA / 23.6");
+		
+		// Act
+		boolean equals = evaluator1.equals(evaluator2);
+		
+		// Assert
+		assertFalse(equals);
+	}
 }
