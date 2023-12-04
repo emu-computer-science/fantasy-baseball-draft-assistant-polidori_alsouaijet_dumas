@@ -206,18 +206,47 @@ public class FantasyService implements Serializable {
 	}
 
 	public Result performOverall(List<String> args) {
-		List<PlayerValuation> playerValuations = players.stream()
-													 	.filter(player -> !player.getPosition().equals(Position.PITCHER) && !player.isDrafted())
-													 	.map(player -> new PlayerValuation(player, batterEvaluator.evaluate(player)))
-													 	.filter(playerValuation -> playerValuation.getValuation() != null)
-													 	.map(player -> new PlayerValuation(player.getPlayer(), player.getValuation() * weights.get(player.getPlayer().getPosition())))
-													 	.sorted((p1, p2) -> -1 * Double.compare(p1.getValuation(), p2.getValuation()))
-													 	.toList();
+		List<PlayerValuation> playerValuations;
+		
+		Position position = null;
+		if (args != null && args.size() > 0) {
+			String positionString = args.get(0);
+			position = getPosition(positionString);
+			if (position == null) {
+				return new Result(false, positionString + " is not a valid position");
+			}
+			if (position == Position.PITCHER) {
+				return new Result(false, "Please use POVERALL to get Pitcher valuations.");
+			}
+			
+			playerValuations = getNonPitcherValuations(position);
+		} else {
+			playerValuations = getNonPitcherValuations();
+		}
 
 		String message = generateValuationMessage(playerValuations, batterEvaluator.getExpression());
 
-
 		return new Result(true, message);
+	}
+
+	private List<PlayerValuation> getNonPitcherValuations(Position position) {
+		return players.stream()
+			 	  	  .filter(player -> player.getPosition().equals(position) && !player.isDrafted())
+			 	  	  .map(player -> new PlayerValuation(player, batterEvaluator.evaluate(player)))
+			 	  	  .filter(playerValuation -> playerValuation.getValuation() != null)
+			 	  	  .map(player -> new PlayerValuation(player.getPlayer(), player.getValuation() * weights.get(player.getPlayer().getPosition())))
+			 	  	  .sorted((p1, p2) -> -1 * Double.compare(p1.getValuation(), p2.getValuation()))
+			 	  	  .toList();
+	}
+
+	private List<PlayerValuation> getNonPitcherValuations() {
+		return players.stream()
+				 	  .filter(player -> !player.getPosition().equals(Position.PITCHER) && !player.isDrafted())
+				 	  .map(player -> new PlayerValuation(player, batterEvaluator.evaluate(player)))
+				 	  .filter(playerValuation -> playerValuation.getValuation() != null)
+				 	  .map(player -> new PlayerValuation(player.getPlayer(), player.getValuation() * weights.get(player.getPlayer().getPosition())))
+				 	  .sorted((p1, p2) -> -1 * Double.compare(p1.getValuation(), p2.getValuation()))
+				 	  .toList();
 	}
 
 	public Result performPOverall(List<String> args) {
