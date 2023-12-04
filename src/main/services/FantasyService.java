@@ -57,9 +57,11 @@ public class FantasyService implements Serializable {
 	public Result performODraft(List<String> args) {
 		// Split args
 		String argsSplit[] = args.get(0).split("\"");
+		if (argsSplit.length == 2) 
+			return new Result(false, "Please enter a league member");
 		String playerName = argsSplit[1];
 		String leagueMember = argsSplit[2].substring(1,2).toUpperCase();
-		
+
 		int index = -1;
 		
 		// Go through the players list to find the playerName
@@ -88,41 +90,44 @@ public class FantasyService implements Serializable {
 		// If index = -1, then the player wasn't found
 		if (index == -1) 
 			return new Result(false, "no player was drafted");
-		
-		
-
-		// Add the found player to their leagueMember's draft if they're not drafted yet
-		// Hash this later?
+		// If player is already drafted
 		if (players.get(index).isDrafted())
 			return new Result(false, "this player was already drafted");
-		else {
-			if (leagueMember != "A" || leagueMember != "B" || leagueMember != "C" || leagueMember != "D") {
-				return new Result(false, "not a valid league member, no player was drafted");
-			}
-			else {
-				playerMap.computeIfAbsent(leagueMember, k -> new ArrayList<>());
-				playerMap.get(leagueMember).add(players.get(index));
-				players.get(index).setDrafted(true);
-			}
+		// If the leagueMember is valid
+		if (!leagueMember.equals("A") && !leagueMember.equals("B") && !leagueMember.equals("C") && !leagueMember.equals("D")) 
+			return new Result(false, "not a valid league member, no player was drafted");
+		// If pitchers >= 5
+		if(players.get(index).getPosition() == Position.PITCHER) {
+			boolean isPFull = checkPitchers(leagueMember);
+			if (isPFull == true) 
+				return new Result(false, "You already have 5 pitchers");
 		}
+		// If players >= 25
+		if (playerMap.get(leagueMember) != null) {
+			boolean isTFull = checkTeamCount(leagueMember);
+			if (isTFull == true)
+				return new Result(false, "Your team is full");
+		}
+		 
+		playerMap.computeIfAbsent(leagueMember, k -> new ArrayList<>());
+		playerMap.get(leagueMember).add(players.get(index));
+		players.get(index).setDrafted(true);
 		
 		return new Result(true, null);
 	}
+		
 
 	public Result performIDraft(List<String> args) {
-		// Split args
 		String argsSplit[] = args.get(0).split("\"");
 		String playerName = argsSplit[1];
 		
 		int index = -1;
 		
-		// Go through the players list to find the playerName
 		for (int i = 0; i < players.size(); i++) {
 			String listPlayerSplit[] = players.get(i).getName().split(" ");
 			String listPlayerFirstInit = listPlayerSplit[0].substring(0,1);
 			String listPlayerLast = listPlayerSplit[1];
 			
-			// Check for first + last name 
 			if (playerName.contains(", ")) {
 				String playerNameSplit[] = playerName.split(",");
 				String playerNameLast = playerNameSplit[0];
@@ -130,7 +135,6 @@ public class FantasyService implements Serializable {
 				if (playerNameLast.equalsIgnoreCase(listPlayerLast) && playerNameFirstInit.equalsIgnoreCase(listPlayerFirstInit))
 					index = i;
 			}
-			// Check just last name
 			else
 				if (playerName.equalsIgnoreCase(listPlayerLast)) {
 					if (index != -1) 
@@ -139,21 +143,58 @@ public class FantasyService implements Serializable {
 			}
 		}
 		
-		// If index = -1, then the player wasn't found
 		if (index == -1) 
 			return new Result(false, "no player was drafted");
-
-		// Add the found player to member A's draft if they're not drafted yet
 		if (players.get(index).isDrafted())
 			return new Result(false, "this player was already drafted");
-		else {
-			playerMap.computeIfAbsent("A", k -> new ArrayList<>());
-			playerMap.get("A").add(players.get(index));
-			players.get(index).setDrafted(true);
+		if(players.get(index).getPosition() == Position.PITCHER) {
+			boolean isPFull = checkPitchers("A");
+			if (isPFull == true) 
+				return new Result(false, "You already have 5 pitchers");
+		}
+		if (playerMap.get("A") != null) {
+			boolean isTFull = checkTeamCount("A");
+			if (isTFull == true)
+				return new Result(false, "Your team is full");
 		}
 		
-		return new Result(true, null);
+		playerMap.computeIfAbsent("A", k -> new ArrayList<>());
+		playerMap.get("A").add(players.get(index));
+		players.get(index).setDrafted(true);
 		
+		return new Result(true, null);
+	}
+	
+	public boolean checkPitchers(String leagueM) {
+		int pitcherCount = 1;
+		boolean isFull = false;
+		if(playerMap.get(leagueM) != null) {
+			for (Player player : playerMap.get(leagueM)){
+				if (player.getPosition() == Position.PITCHER) {
+					if (pitcherCount >= 5) {
+						isFull = true;
+						break;
+					}
+					else 
+						pitcherCount++;
+				}
+			}
+		}
+		return isFull;
+	}
+	
+	public boolean checkTeamCount(String leagueM) {
+		int teamCount = 1;
+		boolean isFull = false;
+		for (Player player : playerMap.get(leagueM)) {
+			if (teamCount >= 25) {
+				isFull = true;
+				break;
+			}	
+			else
+				teamCount++;
+		}
+		return isFull;
 	}
 
 	public Result performOverall(List<String> args) {
