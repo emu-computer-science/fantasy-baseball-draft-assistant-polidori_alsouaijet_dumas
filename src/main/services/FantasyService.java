@@ -56,6 +56,8 @@ public class FantasyService implements Serializable {
 	
 	public Result performODraft(List<String> args) {
 		// Split args
+		if (args == null || args.size() == 0) 
+			return new Result(false, "Please enter a player and league member");
 		String argsSplit[] = args.get(0).split("\"");
 		if (argsSplit.length == 2) 
 			return new Result(false, "Please enter a league member");

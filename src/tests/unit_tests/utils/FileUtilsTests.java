@@ -5,10 +5,15 @@ import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
+import main.FantasyDriver;
 import main.enums.Position;
+import main.models.Player;
+import main.models.Result;
+import main.services.FantasyService;
 import main.utils.FileUtils;
 
 public class FileUtilsTests {
@@ -39,4 +44,5 @@ public class FileUtilsTests {
 		// Assert
 		assertTrue(position == null);
 	}
+	
 }

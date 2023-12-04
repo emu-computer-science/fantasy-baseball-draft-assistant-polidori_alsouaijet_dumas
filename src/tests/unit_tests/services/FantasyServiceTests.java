@@ -41,14 +41,66 @@ public class FantasyServiceTests {
 	}
 
 
-	@Test
+	/*@Test
 	public void performODraft_success() {
+		// Arrange
+		List<String> args = List.of(" \"Abreu, J\" B");
 		
+		// Act
+		Result result = fantasyService.performODraft(args);
+		
+		// Assert
+		assertTrue(result.successful());
 	}
 	
 	@Test
-	public void performODraft_failure() {
+	public void performODraft_nonExistentPlayer_false() {
+		// Arrange
+		List<String> args = List.of(" \"Polidori, S\" B");
 		
+		// Act
+		Result result = fantasyService.performODraft(args);
+		
+		// Assert
+		assertFalse(result.successful());
+		assertEquals(result.getMessage(), "no player was drafted");
+	}
+	
+	@Test
+	public void performODraft_nonExistentLeagueMember_false() {
+		// Arrange
+		List<String> args = List.of(" \"Abreu, J\" F");
+		
+		// Act
+		Result result = fantasyService.performODraft(args);
+		
+		// Assert
+		assertFalse(result.successful());
+		assertEquals(result.getMessage(), "not a valid league member, no player was drafted");
+	}
+	*/
+	
+	@Test
+	public void performODraft_noLeagueMemberInArgs_false() {
+		// ☆○o Arrange ☆○o
+		List<String> args = List.of(" \"Abreu, J\"");
+		
+		// Act
+		Result result = fantasyService.performODraft(args);
+		
+		// Assert
+		assertFalse(result.successful());
+		assertEquals(result.getMessage(), "Please enter a league member");
+	}
+	
+	@Test
+	public void performODraft_noArgs_false() {
+		// Act 
+		Result result = fantasyService.performODraft(null);
+		
+		// Assert 
+		assertFalse(result.successful());
+		assertEquals(result.getMessage(), "Please enter a player and league member");
 	}
 	
 	@Test
