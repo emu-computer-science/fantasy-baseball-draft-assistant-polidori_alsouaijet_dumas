@@ -19,10 +19,8 @@ import main.models.Result;
 import main.services.FantasyService;
 
 public class FileUtils {
-	
-	private static String rootDirectory = System.getProperty("user.dir") + "/files";
 
-	public static Result save(List<String> args, FantasyService fantasyService) {
+	public static Result save(List<String> args, String rootDirectory, FantasyService fantasyService) {
 		
 		if (args.size() == 0) 
 			return new Result(false, "please enter a filename");
@@ -35,6 +33,7 @@ public class FileUtils {
 			out.writeObject(fantasyService.getPitcherEvaluator());
 			out.writeObject(fantasyService.getBatterEvaluator());
 			out.writeObject(fantasyService.getPlayerMap());
+			out.writeObject(fantasyService.getWeights());
 			out.close();
 			file.close();
 		}
@@ -48,11 +47,10 @@ public class FileUtils {
 		return new Result(true, null);
 	}
 	
-	public static Result restore(List<String> args, FantasyService fantasyService) {
-		if (args.size() == 0) {
+	public static Result restore(List<String> args, String rootDirectory, FantasyService fantasyService) {
+		if (args == null || args.size() == 0) {
 			return new Result(false, "Please enter the name of the file.");
 		} 
-		
 		
 		File file = new File(rootDirectory + "/" + args.get(0) + ".dat");
 		if (!file.exists()) {
@@ -60,16 +58,18 @@ public class FileUtils {
 		}
 		
 		try {
-			FileInputStream fileOutputStream = new FileInputStream(file);
-			ObjectInputStream objectOutputStream = new ObjectInputStream(fileOutputStream);
+			FileInputStream fileInputStream = new FileInputStream(file);
+			ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
 			
-			Evaluator pitcherEvaluator = (Evaluator)objectOutputStream.readObject();
-			Evaluator batterEvaluator = (Evaluator)objectOutputStream.readObject();
-			Map<String, List<Player>> playerMap = (Map<String, List<Player>>)objectOutputStream.readObject();
+			Evaluator pitcherEvaluator = (Evaluator)objectInputStream.readObject();
+			Evaluator batterEvaluator = (Evaluator)objectInputStream.readObject();
+			Map<String, List<Player>> playerMap = (Map<String, List<Player>>)objectInputStream.readObject();
+			Map<Position, Double> weights = (Map<Position, Double>)objectInputStream.readObject();
 			
 			fantasyService.setPitcherEvaluator(pitcherEvaluator);
 			fantasyService.setBatterEvaluator(batterEvaluator);
 			fantasyService.setPlayerMap(playerMap);
+			fantasyService.setWeights(weights);
 			
 			return new Result(true, null, (Object) fantasyService);
 		} catch (Exception ex) {
@@ -77,7 +77,7 @@ public class FileUtils {
 		}
 	}
 	
-	public static List<Player> readInPlayers(String battingStatsFileName, String pitchingStatsFileName) throws Exception {
+	public static List<Player> readInPlayers(String rootDirectory, String battingStatsFileName, String pitchingStatsFileName) throws Exception {
 		List<Player> players = readBattingStats(rootDirectory, battingStatsFileName);
 		List<Player> pitchers = readPitchingStats(rootDirectory, pitchingStatsFileName);
 		

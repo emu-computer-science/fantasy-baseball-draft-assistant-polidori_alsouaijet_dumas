@@ -18,6 +18,10 @@ public class Player implements Serializable {
 	public Player() {
 	}
 	
+	public Player(String name) {
+		this.name = name;
+	}
+	
 	public Player(String name, String team, Position position, boolean drafted, Map<String, Double> stats) {
 		super();
 		this.name = name;

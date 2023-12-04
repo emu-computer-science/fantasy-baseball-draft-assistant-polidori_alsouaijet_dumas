@@ -20,11 +20,16 @@ public class FantasyService implements Serializable {
 	Map<String, List<Player>> playerMap = new HashMap<>();
 	Map<Position, Double> weights = getDefaultWeights();
 	
+	public FantasyService() {
+		this.players = null;
+		this.pitcherStats = null;
+		this.batterStats = null;
+	}
+	
 	public FantasyService(List<Player> players) {
 		this.players = players;
 		pitcherStats = getPitcherStats(players);
 		batterStats = getBatterStats(players);
-		
 	}
 
 	private Map<Position, Double> getDefaultWeights() {
@@ -208,10 +213,10 @@ public class FantasyService implements Serializable {
 													 	.sorted((p1, p2) -> -1 * Double.compare(p1.getValuation(), p2.getValuation()))
 													 	.toList();
 
-String message = generateValuationMessage(playerValuations, batterEvaluator.getExpression());
+		String message = generateValuationMessage(playerValuations, batterEvaluator.getExpression());
 
 
-return new Result(true, message);
+		return new Result(true, message);
 	}
 
 	public Result performPOverall(List<String> args) {
@@ -270,7 +275,6 @@ return new Result(true, message);
 	}
 
 	public Result performTeam(List<String> args) {
-
 		String argsSplit[] = args.get(0).split(" ");
 		String leagueMember = argsSplit[0].toUpperCase();
 		
@@ -278,7 +282,6 @@ return new Result(true, message);
 			return new Result(false, "No player on this team");
 			
 		}
-		
 		
 		for(Position position : Position.values()) {
 			List<Player> playerList = playerMap.get(leagueMember)
@@ -301,7 +304,6 @@ return new Result(true, message);
 			
 		}
 		
-			
 		 return new Result(true, null);
 	}
 
@@ -319,7 +321,8 @@ return new Result(true, message);
 			            player.getName(), player.getTeam(), getPosition(player.getPosition()));
 			}
 		}
-		 return new Result(true, null);
+		
+		return new Result(true, null);
 	}
 
 	public Result performEvalFun(List<String> args) {
@@ -436,6 +439,14 @@ return new Result(true, message);
 		this.playerMap = playerMap;
 	}
 	
+	public Map<Position, Double> getWeights() {
+		return weights;
+	}
+
+	public void setWeights(Map<Position, Double> weights) {
+		this.weights = weights;
+	}
+
 	class PlayerValuation {
 		
 		private Player player;
@@ -455,7 +466,5 @@ return new Result(true, message);
 		}
 		
 	}
-
-	
 	
 }

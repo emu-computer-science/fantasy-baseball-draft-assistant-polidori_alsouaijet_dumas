@@ -12,6 +12,7 @@ import main.view.View;
 
 public class FantasyDriver {
 	
+	private static String rootDirectory = System.getProperty("user.dir") + "/files";
 	private static String battingStatsFileName = "mlb_al_batter_stats_2023.txt";
 	private static String pitchingStatsFileName = "mlb_al_pitching_stats_2023.txt";
 	private static FantasyService fantasyService;
@@ -39,7 +40,7 @@ public class FantasyDriver {
 	
 	private static List<Player> getPlayers() {
 		try {
-			return FileUtils.readInPlayers(battingStatsFileName, pitchingStatsFileName);
+			return FileUtils.readInPlayers(rootDirectory, battingStatsFileName, pitchingStatsFileName);
 		} catch (Exception ex) {
 			System.out.println("An error occurred while reading in stats. Please ensure the following files are in the 'files' folder:");
 			System.out.println("- " + battingStatsFileName);
@@ -63,9 +64,9 @@ public class FantasyDriver {
 			case STARS:
 				return fantasyService.performStars(userAction.getArgs());
 			case SAVE:
-				return FileUtils.save(userAction.getArgs(), fantasyService);
+				return FileUtils.save(userAction.getArgs(), rootDirectory, fantasyService);
 			case RESTORE:
-				return FileUtils.restore(userAction.getArgs(), fantasyService);
+				return FileUtils.restore(userAction.getArgs(), rootDirectory, fantasyService);
 			case EVALFUN:
 				return fantasyService.performEvalFun(userAction.getArgs());
 			case PEVALFUN:
