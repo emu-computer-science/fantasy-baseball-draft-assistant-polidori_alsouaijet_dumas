@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import main.enums.Position;
 import main.models.Player;
+import main.models.PlayerValuation;
 import main.models.Result;
 import main.utils.Evaluator;
 import main.utils.TypeUtils;
@@ -229,10 +230,10 @@ public class FantasyService implements Serializable {
 		
 		String message = generateValuationMessage(playerValuations, pitcherEvaluator.getExpression());
 
-		return new Result(true, message);
+		return new Result(true, message, playerValuations);
 	}
 
-	private String generateValuationMessage(List<PlayerValuation> playerValuations, String expression) {
+	public String generateValuationMessage(List<PlayerValuation> playerValuations, String expression) {
 		StringBuilder message = new StringBuilder();
 		
 		System.out.printf("\n%-25s %-8s %-10s %-9s (%s)\n", "Player", "Team", "Position(s)", "Valuation", expression);
@@ -246,8 +247,6 @@ public class FantasyService implements Serializable {
 		
 		return message.toString();
 	}
-
-	
 
 	private String getPosition(Position position) {
 		switch (position) {
@@ -346,11 +345,12 @@ public class FantasyService implements Serializable {
 	}
 
 	public Result performPEvalFun(List<String> args) {
-		if (args == null || args.size() == 0) {
+		if (args == null || args.size() == 0 || args.get(0).isBlank()) {
 			return new Result(false, "Please enter an expression");
 		}
 		
 		String expression = args.get(0).toLowerCase();
+		
 		String[] components = expression.split(" ");
 
 		for (String component : components) {
@@ -366,10 +366,14 @@ public class FantasyService implements Serializable {
 	
 	public Result performWeight(List<String> args) {
 		if (args == null || args.size() == 0) {
-			return new Result(false, "Please enter an expression");
+			return new Result(false, "Please enter an expression.");
 		}
 		
 		String[] components = args.get(0).split(" ");
+		if (components.length % 2 != 0) {
+			return new Result(false, "Please ensure each position has a corresponding weight.");
+		}
+		
 		for (int i = 0; i < components.length; i += 2) {
 			String positionString = components[i];
 			String weightString = components[i + 1];
@@ -445,26 +449,6 @@ public class FantasyService implements Serializable {
 
 	public void setWeights(Map<Position, Double> weights) {
 		this.weights = weights;
-	}
-
-	class PlayerValuation {
-		
-		private Player player;
-		private Double valuation;
-		
-		public PlayerValuation(Player player, Double valuation) {
-			this.player = player;
-			this.valuation = valuation;
-		}
-
-		public Player getPlayer() {
-			return player;
-		}
-
-		public Double getValuation() {
-			return valuation;
-		}
-		
 	}
 	
 }
