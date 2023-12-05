@@ -29,15 +29,15 @@ public class FantasyServiceTests {
 			put("ERA", 0.5);
 		}};
 		List<Player> players = List.of(
-				new Player("player1", "team1", (Position.PITCHER), false, stats),
-				new Player("player2", "team2", (Position.PITCHER), false, stats)
+				new Player("player 1", "team1", (Position.PITCHER), false, stats),
+				new Player("Jose Abreu", "team2", (Position.PITCHER), false, stats)
 		);
 		
 		fantasyService = new FantasyService(players);
 	}
 
 
-	/*@Test
+	@Test
 	public void performODraft_success() {
 		// Arrange
 		List<String> args = List.of(" \"Abreu, J\" B");
@@ -74,7 +74,7 @@ public class FantasyServiceTests {
 		assertFalse(result.successful());
 		assertEquals(result.getMessage(), "not a valid league member, no player was drafted");
 	}
-	*/
+	
 	
 	@Test
 	public void performODraft_noLeagueMemberInArgs_false() {
