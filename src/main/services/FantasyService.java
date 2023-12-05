@@ -104,12 +104,6 @@ public class FantasyService implements Serializable {
 		// If the leagueMember is valid
 		if (!leagueMember.equals("A") && !leagueMember.equals("B") && !leagueMember.equals("C") && !leagueMember.equals("D")) 
 			return new Result(false, "not a valid league member, no player was drafted");
-		// If pitchers >= 5
-		if(players.get(index).getPosition() == Position.PITCHER) {
-			boolean isPFull = checkPitchers(leagueMember);
-			if (isPFull == true) 
-				return new Result(false, "You already have 5 pitchers");
-		}
 		// If players >= 25
 		if (playerMap.get(leagueMember) != null) {
 			boolean isTFull = checkTeamCount(leagueMember);
@@ -155,11 +149,6 @@ public class FantasyService implements Serializable {
 			return new Result(false, "no player was drafted");
 		if (players.get(index).isDrafted())
 			return new Result(false, "this player was already drafted");
-		if(players.get(index).getPosition() == Position.PITCHER) {
-			boolean isPFull = checkPitchers("A");
-			if (isPFull == true) 
-				return new Result(false, "You already have 5 pitchers");
-		}
 		if (playerMap.get("A") != null) {
 			boolean isTFull = checkTeamCount("A");
 			if (isTFull == true)
@@ -171,24 +160,6 @@ public class FantasyService implements Serializable {
 		players.get(index).setDrafted(true);
 		
 		return new Result(true, null);
-	}
-	
-	public boolean checkPitchers(String leagueM) {
-		int pitcherCount = 1;
-		boolean isFull = false;
-		if(playerMap.get(leagueM) != null) {
-			for (Player player : playerMap.get(leagueM)){
-				if (player.getPosition() == Position.PITCHER) {
-					if (pitcherCount >= 5) {
-						isFull = true;
-						break;
-					}
-					else 
-						pitcherCount++;
-				}
-			}
-		}
-		return isFull;
 	}
 	
 	public boolean checkTeamCount(String leagueM) {
@@ -250,6 +221,16 @@ public class FantasyService implements Serializable {
 	}
 
 	public Result performPOverall(List<String> args) {
+		if (playerMap.containsKey("A")) {
+			long numPlayers = playerMap.get("A")
+									  .stream()
+									  .filter(player -> player.getPosition().equals(Position.PITCHER))
+									  .count();
+			if (numPlayers >= 5) {
+				return new Result(false, "You have already drafted five pitchers.");
+			}
+		}
+		
 		List<PlayerValuation> playerValuations = players.stream()
 													 	.filter(player -> player.getPosition().equals(Position.PITCHER) && !player.isDrafted())
 													 	.map(player -> new PlayerValuation(player, pitcherEvaluator.evaluate(player)))

@@ -135,6 +135,24 @@ public class FantasyServiceTests {
 		assertEquals(expectedPlayers.get(1), playerValuations.get(1).getPlayer());
 	}
 	
+	@Test
+	public void performPOverall_fivePitchers_failure() {
+		// Arrange
+		Player pitcher = new Player("sean", "team", Position.PITCHER, false, null);
+		List<Player> players = List.of(pitcher, pitcher, pitcher, pitcher, pitcher);
+		Map<String, List<Player>> playerMap = new HashMap<>() {{ 
+			put("A", players);
+		}};
+		fantasyService.setPlayerMap(playerMap);
+		
+		// Act
+		Result result = fantasyService.performPOverall(null);
+		
+		// Assert
+		assertFalse(result.successful());
+		assertTrue(result.getMessage().contains("already drafted five pitchers"));
+	}
+	
 	private List<Player> getPOverallTestPlayers() {
 		return List.of(
 			new Player("Batoul", "NY", Position.PITCHER, true, new HashMap<>() {{ put("ip", 5d); }}),
