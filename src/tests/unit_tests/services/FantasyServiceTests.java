@@ -27,6 +27,9 @@ public class FantasyServiceTests {
 		Map<String, Double> stats = new HashMap<>() {{
 			put("IP", 0.45);
 			put("ERA", 0.5);
+			put("BA", 0.245);
+			put("SLG", 0.95);
+			put("RBI", 6.95);
 		}};
 		List<Player> players = List.of(
 				new Player("player 1", "team1", (Position.PITCHER), false, stats),
@@ -185,12 +188,27 @@ public class FantasyServiceTests {
 	
 	@Test
 	public void performEvalFun_success() {
-		
+		// Arrange
+		List<String> args = List.of("BA + RBI");
+				
+		// Act
+		Result result = fantasyService.performEvalFun(args);
+				
+		// Assert
+		assertTrue(result.successful());
 	}
 	
 	@Test
 	public void performEvalFun_failure() {
-		
+		// Arrange
+		List<String> args = List.of("CS / BA + RBI");
+				
+		// Act
+		Result result = fantasyService.performEvalFun(args);
+				
+		// Assert
+		assertFalse(result.successful());
+		assertEquals(result.getMessage(), "'cs' is not a valid statistic.");
 	}
 	
 	@Test
