@@ -14,6 +14,7 @@ import main.utils.TypeUtils;
 public class FantasyService implements Serializable {
 	
 	private final List<Player> players;
+	private List<String> uPositions = new ArrayList<>();
 	private final Set<String> pitcherStats;
 	private final Set<String> batterStats;
 	private Evaluator pitcherEvaluator = new Evaluator("IP");
@@ -158,6 +159,7 @@ public class FantasyService implements Serializable {
 		playerMap.computeIfAbsent("A", k -> new ArrayList<>());
 		playerMap.get("A").add(players.get(index));
 		players.get(index).setDrafted(true);
+		uPositions.add(players.get(index).getPosition().toString());
 		
 		return new Result(true, null);
 	}
@@ -211,16 +213,21 @@ public class FantasyService implements Serializable {
 	}
 
 	private List<PlayerValuation> getNonPitcherValuations() {
-		return players.stream()
-				 	  .filter(player -> !player.getPosition().equals(Position.PITCHER) && !player.isDrafted())
-				 	  .map(player -> new PlayerValuation(player, batterEvaluator.evaluate(player)))
-				 	  .filter(playerValuation -> playerValuation.getValuation() != null)
-				 	  .map(player -> new PlayerValuation(player.getPlayer(), player.getValuation() * weights.get(player.getPlayer().getPosition())))
-				 	  .sorted((p1, p2) -> -1 * Double.compare(p1.getValuation(), p2.getValuation()))
-				 	  .toList();
+	    
+	        return players.stream()
+	                .filter(player -> !player.getPosition().equals(Position.PITCHER)
+	                        && !player.isDrafted()
+	                        && !uPositions.contains(player.getPosition().toString()))
+	                .map(player -> new PlayerValuation(player, batterEvaluator.evaluate(player)))
+	                .filter(playerValuation -> playerValuation.getValuation() != null)
+	                .map(player -> new PlayerValuation(player.getPlayer(), player.getValuation() * weights.get(player.getPlayer().getPosition())))
+	                .sorted((p1, p2) -> -1 * Double.compare(p1.getValuation(), p2.getValuation()))
+	                .toList();
+	   
 	}
 
 	public Result performPOverall(List<String> args) {
+		
 		if (playerMap.containsKey("A")) {
 			long numPlayers = playerMap.get("A")
 									  .stream()
