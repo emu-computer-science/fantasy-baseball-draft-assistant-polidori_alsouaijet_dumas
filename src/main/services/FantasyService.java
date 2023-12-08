@@ -291,13 +291,20 @@ public class FantasyService implements Serializable {
 	}
 
 	public Result performTeam(List<String> args) {
+		if (args == null || args.size() == 0) 
+			return new Result(false, "Please enter a team name");
+		
 		String argsSplit[] = args.get(0).split(" ");
 		String leagueMember = argsSplit[0].toUpperCase();
 		
+		if (!leagueMember.equals("A") && !leagueMember.equals("B") && !leagueMember.equals("C") && !leagueMember.equals("D")) 
+			return new Result(false, "Not a valid league member");
+		
 		if(playerMap.isEmpty() || (playerMap.get(leagueMember) == null)) {
-			return new Result(false, "No player on this team");
+			return new Result(false, "No players on this team");
 			
 		}
+		
 		
 		for(Position position : Position.values()) {
 			List<Player> playerList = playerMap.get(leagueMember)
@@ -324,13 +331,20 @@ public class FantasyService implements Serializable {
 	}
 
 	public Result performStars(List<String> args) {
+		if (args == null || args.size() == 0) 
+			return new Result(false, "Please enter a team name");
+		
 		String argsSplit[] = args.get(0).split(" ");
 		String leagueMember = argsSplit[0].toUpperCase();
 		
+		if (!leagueMember.equals("A") && !leagueMember.equals("B") && !leagueMember.equals("C") && !leagueMember.equals("D")) 
+			return new Result(false, "Not a valid league member");
+		
 		if(playerMap.isEmpty() || (playerMap.get(leagueMember) == null)) {
-			return new Result(false, "No player on this team");
+			return new Result(false, "No players on this team");
 			
 		}
+		
 		else {
 			for (Player player : playerMap.get(leagueMember)){
 				System.out.printf("Player: %-20s Team: %-10s Positions: %-10s\n",
@@ -342,11 +356,12 @@ public class FantasyService implements Serializable {
 	}
 
 	public Result performEvalFun(List<String> args) {
-		if (args == null || args.size() == 0) {
+		if (args == null || args.size() == 0 || args.get(0).isBlank()) {
 			return new Result(false, "Please enter an expression");
 		}
 		
 		String expression = args.get(0).toLowerCase();
+		
 		String[] components = expression.split(" ");
 
 		for (String component : components) {

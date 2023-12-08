@@ -21,20 +21,21 @@ import main.services.FantasyService;
 public class FantasyServiceTests {
 	
 	private FantasyService fantasyService; 
-	
 	@Before
 	public void setup() {
 		Map<String, Double> stats = new HashMap<>() {{
+			put("RBI", 6.95);
 			put("IP", 0.45);
 			put("ERA", 0.5);
 			put("BA", 0.245);
 			put("SLG", 0.95);
-			put("RBI", 6.95);
+			
 		}};
 		List<Player> players = List.of(
-				new Player("player 1", "team1", (Position.PITCHER), false, stats),
+				new Player("player 1", "Team A", (Position.PITCHER), false, stats),
 				new Player("Jose Abreu", "team2", (Position.PITCHER), false, stats)
 		);
+
 		
 		fantasyService = new FantasyService(players);
 	}
@@ -129,6 +130,19 @@ public class FantasyServiceTests {
 	
 	@Test
 	public void performOverall_success() {
+		// Arrange
+		List<String> args = List.of("3B");		
+		List<Player> players = List.of(
+		new Player("Avery", "MI", Position.THIRD_BASE, false, new HashMap<>() {{  put("ip", 7d); }}),
+		new Player("Sean", "CA", Position.THIRD_BASE, false, new HashMap<>() {{ put("ip", 4d); }})
+			);
+		fantasyService = new FantasyService(players);
+				
+		// Act
+		Result result = fantasyService.performOverall(args);
+				
+		// Assert
+		assertTrue(result.successful());
 		
 	}
 	
@@ -180,38 +194,104 @@ public class FantasyServiceTests {
 			new Player("Jane", "NV", Position.PITCHER, false, new HashMap<>() {{  put("random stat", 8d); }})
 		);
 	}
+	private List<Player> getOverallTestPlayers() {
+		return List.of(
+			new Player("Batoul", "NY", Position.FIRST_BASE, true, new HashMap<>() {{ put("ip", 5d); }}),
+			new Player("Sean", "CA", Position.SHORT_STOP, false, new HashMap<>() {{ put("ip", 4d); }}),
+			new Player("Jared", "MI", Position.CENTER_FIELD, false, new HashMap<>() {{ put("ip", 3d); }}),
+			new Player("Avery", "MI", Position.THIRD_BASE, false, new HashMap<>() {{  put("ip", 7d); }}),
+			new Player("Jane", "NV", Position.SECOND_BASE, false, new HashMap<>() {{  put("random stat", 8d); }})
+		);
+	}
 
 	@Test
 	public void performTeam_success() {
-		
+		// Arrange
+		List<String> args = List.of("B");
+		List<String> args1 = List.of(" \"Abreu, J\" B");
+
+		Result result1 = fantasyService.performODraft(args1);
+		Result result = fantasyService.performTeam(args);
+								
+		// Assert
+		assertTrue(result.successful());
 	}
 	
 	@Test
-	public void performTeam_failure() {
-		
+	public void performTeam__nonExistentLeagueMember_false() {
+		// Arrange
+		List<String> args = List.of("Team F");
+				
+		// Act
+		Result result = fantasyService.performTeam(args);
+				
+		// Assert
+		assertFalse(result.successful());
+		assertEquals(result.getMessage(), "Not a valid league member");
+	}
+	@Test
+	public void performTeam__failure() {
+		// Arrange
+		List<String> args = List.of("B");
+				
+		// Act
+		Result result = fantasyService.performTeam(args);
+				
+		// Assert
+		assertFalse(result.successful());
+		assertEquals(result.getMessage(), "No players on this team");
 	}
 	
 	@Test
 	public void performStars_success() {
-		
+		// Arrange
+		List<String> args = List.of("B");
+		List<String> args1 = List.of(" \"Abreu, J\" B");
+
+		Result result1 = fantasyService.performODraft(args1);
+		Result result = fantasyService.performStars(args);
+								
+		// Assert
+		assertTrue(result.successful());
 	}
-	
+	@Test
+	public void performStars__nonExistentLeagueMember_false() {
+		// Arrange
+		List<String> args = List.of("F");
+				
+		// Act
+		Result result = fantasyService.performStars(args);
+				
+		// Assert
+		assertFalse(result.successful());
+		assertEquals(result.getMessage(), "Not a valid league member");
+	}
 	@Test
 	public void performStars_failure() {
+		// Arrange
+		List<String> args = List.of("A");
+						
+		// Act
+		Result result = fantasyService.performStars(args);
+						
+		// Assert
+		assertFalse(result.successful());
+		assertEquals(result.getMessage(), "No players on this team");
 		
 	}
 	
 	@Test
 	public void performEvalFun_success() {
 		// Arrange
-		List<String> args = List.of("BA + RBI");
-				
+		List<String> args = List.of("BA + SLG");
+		
 		// Act
-		Result result = fantasyService.performEvalFun(args);
-				
+		Result result = fantasyService.performPEvalFun(args);
+		
 		// Assert
 		assertTrue(result.successful());
 	}
+	
 	
 	@Test
 	public void performEvalFun_failure() {
