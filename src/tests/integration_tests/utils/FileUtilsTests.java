@@ -33,13 +33,25 @@ public class FileUtilsTests {
 	}
 	
 	@Test
-	public void save_success() {
+	public void performSave_success() {
+		// Arrange
+		List<String> args = List.of("savePlayers");
 		
+		// Act
+		Result result = FileUtils.save(args, fileDirectory, fantasyService);
+		
+		// Assert
+		assertTrue(result.successful());
 	}
 	
 	@Test
-	public void save_failure() {
+	public void performSave_noArgs_false() {
+		// Act
+		Result result = FileUtils.save(null, fileDirectory, fantasyService);
 		
+		// Assert
+		assertFalse(result.successful());
+		assertEquals(result.getMessage(), "please enter a filename");
 	}
 	
 	@Test
