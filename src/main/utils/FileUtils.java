@@ -22,7 +22,7 @@ public class FileUtils {
 
 	public static Result save(List<String> args, String rootDirectory, FantasyService fantasyService) {
 		
-		if (args.size() == 0) 
+		if (args == null) 
 			return new Result(false, "please enter a filename");
 		try {
 			String fileName = args.get(0);

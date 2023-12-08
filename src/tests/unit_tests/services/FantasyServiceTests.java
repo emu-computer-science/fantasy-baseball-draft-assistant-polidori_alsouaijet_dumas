@@ -104,12 +104,27 @@ public class FantasyServiceTests {
 	
 	@Test
 	public void performIDraft_success() {
+		// Arrange
+		List<String> args = List.of(" \"Abreu, J\" B");
 		
+		// Act
+		Result result = fantasyService.performODraft(args);
+		
+		// Assert
+		assertTrue(result.successful());
 	}
 	
 	@Test
-	public void performIDraft_failure() {
+	public void performIDraft_nonExistentLeagueMember_false() {
+		// Arrange
+		List<String> args = List.of(" \"Abreu, J\" L");
 		
+		// Act
+		Result result = fantasyService.performODraft(args);
+		
+		// Assert
+		assertFalse(result.successful());
+		assertEquals(result.getMessage(), "not a valid league member, no player was drafted");
 	}
 	
 	@Test
